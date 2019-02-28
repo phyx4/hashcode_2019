@@ -95,25 +95,35 @@ def write_output(slideshow, output_file):
 
 
 def get_slideshow(photos):
-    slideshow = SlideShow()
+    slides = []
     vert = None
-    # max = 0
-    # max_photo = None
-    tags = set()
     for photo in photos:
-        # max_photo = photo if len(photo.tags) > max else max_photo
-        # max = len(photo.tags) if len(photo.tags) > max else max
-        tags.update(photo.tags)
         if photo.layout == "H":
-            slideshow.slides.append(Slide([photo]))
+            slides.append(Slide([photo]))
         elif photo.layout == "V" and vert is None:
             vert = photo
         elif photo.layout == "V" and vert is not None:
-            slideshow.slides.append(Slide([photo, vert]))
+            slides.append(Slide([photo, vert]))
             vert = None
-    # print("MAX TAGS IN PHOTO: {}".format(max))
-    print("TAGS: {}".format(len(tags)))
-    return slideshow
+    # all_vert_comb = list(itertools.combinations(verticals, 2))
+    max_score = 0
+    max_perm = None
+    # print("Calculating perms of {} elements".format(len(slides)))
+    # slides_perms = [list(x) for x in set(itertools.permutations(slides))]
+    # print("Trying {} permutations".format(len(slides_perms)))
+    # for slides_perm in slides_perms:
+    #     score = SlideShow(slides_perm).calculate_score()
+    #     max_perm = slides_perm if score > max_score else max_perm
+    #     max_score = score if score > max_score else max_score
+
+    print("Calculating perms of {} elements".format(len(slides)))
+    slides_perms = itertools.permutations(slides)
+    # print("Trying {} permutations".format(len(slides_perms)))
+    for slides_perm in slides_perms:
+        score = SlideShow(slides_perm).calculate_score()
+        max_perm = slides_perm if score > max_score else max_perm
+        max_score = score if score > max_score else max_score
+    return SlideShow(max_perm)
 
 
 def main():
