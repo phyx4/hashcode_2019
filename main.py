@@ -105,25 +105,16 @@ def get_slideshow(photos):
         elif photo.layout == "V" and vert is not None:
             slides.append(Slide([photo, vert]))
             vert = None
-    # all_vert_comb = list(itertools.combinations(verticals, 2))
-    max_score = 0
-    max_perm = None
-    # print("Calculating perms of {} elements".format(len(slides)))
-    # slides_perms = [list(x) for x in set(itertools.permutations(slides))]
-    # print("Trying {} permutations".format(len(slides_perms)))
-    # for slides_perm in slides_perms:
-    #     score = SlideShow(slides_perm).calculate_score()
-    #     max_perm = slides_perm if score > max_score else max_perm
-    #     max_score = score if score > max_score else max_score
 
-    print("Calculating perms of {} elements".format(len(slides)))
-    slides_perms = itertools.permutations(slides)
-    # print("Trying {} permutations".format(len(slides_perms)))
-    for slides_perm in slides_perms:
-        score = SlideShow(slides_perm).calculate_score()
-        max_perm = slides_perm if score > max_score else max_perm
-        max_score = score if score > max_score else max_score
-    return SlideShow(max_perm)
+    next_with_common = slides[0]
+    new_slides = [next_with_common]
+    slides = slides[1:]
+    while len(slides):
+        next_with_common = next(filter(lambda x: n_common_tags(x, next_with_common) > 1, slides), slides[0])
+        new_slides.append(next_with_common)
+        slides.remove(next_with_common)
+
+    return SlideShow(new_slides)
 
 
 def main():
