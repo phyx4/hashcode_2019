@@ -95,8 +95,25 @@ def write_output(slideshow, output_file):
 
 
 def get_slideshow(photos):
-    # TODO
-    return SlideShow()
+    slideshow = SlideShow()
+    vert = None
+    # max = 0
+    # max_photo = None
+    tags = set()
+    for photo in photos:
+        # max_photo = photo if len(photo.tags) > max else max_photo
+        # max = len(photo.tags) if len(photo.tags) > max else max
+        tags.update(photo.tags)
+        if photo.layout == "H":
+            slideshow.slides.append(Slide([photo]))
+        elif photo.layout == "V" and vert is None:
+            vert = photo
+        elif photo.layout == "V" and vert is not None:
+            slideshow.slides.append(Slide([photo, vert]))
+            vert = None
+    # print("MAX TAGS IN PHOTO: {}".format(max))
+    print("TAGS: {}".format(len(tags)))
+    return slideshow
 
 
 def main():
