@@ -95,9 +95,10 @@ def write_output(slideshow, output_file):
 
 
 def get_slideshow(photos):
-    slides = []
+    slideshow = SlideShow()
     vert = None
-    for photo in photos:
+    slides = []
+    for photo in sorted(photos, key=lambda x: x.tagalf):
         if photo.layout == "H":
             slides.append(Slide([photo]))
         elif photo.layout == "V" and vert is None:
@@ -106,15 +107,9 @@ def get_slideshow(photos):
             slides.append(Slide([photo, vert]))
             vert = None
 
-    next_with_common = slides[0]
-    new_slides = [next_with_common]
-    slides = slides[1:]
-    while len(slides):
-        next_with_common = next(filter(lambda x: n_common_tags(x, next_with_common) > 1, slides), slides[0])
-        new_slides.append(next_with_common)
-        slides.remove(next_with_common)
+    slides.sort(key=lambda x: x.tags_sorted)
 
-    return SlideShow(new_slides)
+    return SlideShow(slides)
 
 
 def main():
